@@ -27,7 +27,6 @@
   --text:#e8e8ff;
   --text2:rgba(232,232,255,0.5);
   --board-w:10;
-  --cell:min(8.5vw, 36px);
   --r:8px;
 }
 html,body{
@@ -50,7 +49,6 @@ body::before{
   background-size:40px 40px;
   pointer-events:none;
 }
-/* Плавающие сферы */
 .orb{
   position:fixed;border-radius:50%;filter:blur(80px);
   pointer-events:none;z-index:0;opacity:0.15;
@@ -75,16 +73,134 @@ body::before{
   transition:opacity 0.5s cubic-bezier(0.4,0,0.2,1),
              transform 0.5s cubic-bezier(0.4,0,0.2,1);
   transform:scale(0.96);
-  padding:20px;
+  padding:20px;overflow-y:auto;
 }
 .screen.visible{opacity:1;pointer-events:all;transform:scale(1)}
 .screen.out{opacity:0;transform:scale(1.04);transition-duration:0.3s}
 
 /* ══════════════════════════════════════════
+   AUTH ЭКРАНЫ
+══════════════════════════════════════════ */
+#s-auth{gap:0}
+.auth-container{
+  width:100%;max-width:360px;
+  background:rgba(10,10,31,0.8);
+  border:1px solid rgba(0,255,247,0.15);
+  border-radius:20px;
+  backdrop-filter:blur(30px);
+  overflow:hidden;
+  box-shadow:0 0 60px rgba(0,255,247,0.08),0 0 120px rgba(139,0,255,0.06);
+}
+/* Tabs */
+.auth-tabs{
+  display:flex;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.auth-tab{
+  flex:1;padding:16px;text-align:center;cursor:pointer;
+  font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;
+  color:var(--text2);transition:all 0.3s;position:relative;
+  background:none;border:none;
+}
+.auth-tab::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--neon-cyan);transform:scaleX(0);transition:transform 0.3s;
+  box-shadow:0 0 10px var(--neon-cyan);
+}
+.auth-tab.active{color:var(--neon-cyan);}
+.auth-tab.active::after{transform:scaleX(1)}
+/* Form panels */
+.auth-panel{display:none;padding:28px 28px 24px;}
+.auth-panel.active{display:block}
+.auth-logo{
+  text-align:center;margin-bottom:24px;
+}
+.auth-logo-text{
+  font-family:'Orbitron',monospace;font-weight:900;font-size:28px;
+  letter-spacing:6px;
+  background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 20px rgba(0,255,247,0.4));
+}
+.auth-logo-sub{
+  font-size:11px;letter-spacing:4px;color:var(--text2);margin-top:2px;
+}
+/* Input */
+.auth-field{margin-bottom:16px}
+.auth-label{
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text2);display:block;margin-bottom:6px;
+}
+.auth-input{
+  width:100%;padding:13px 16px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;
+  transition:all 0.25s;outline:none;
+  -webkit-appearance:none;
+}
+.auth-input:focus{
+  border-color:var(--neon-cyan);
+  background:rgba(0,255,247,0.05);
+  box-shadow:0 0 0 3px rgba(0,255,247,0.1),0 0 20px rgba(0,255,247,0.1);
+}
+.auth-input::placeholder{color:rgba(255,255,255,0.2)}
+/* Error/success */
+.auth-msg{
+  padding:10px 14px;border-radius:8px;font-size:13px;
+  margin-bottom:14px;display:none;text-align:center;
+  letter-spacing:0.5px;
+}
+.auth-msg.error{
+  background:rgba(255,34,68,0.12);
+  border:1px solid rgba(255,34,68,0.3);
+  color:var(--neon-red);display:block;
+}
+.auth-msg.success{
+  background:rgba(0,255,136,0.1);
+  border:1px solid rgba(0,255,136,0.3);
+  color:var(--neon-green);display:block;
+}
+/* Submit btn */
+.auth-btn{
+  width:100%;padding:15px;margin-top:4px;
+  font-family:'Orbitron',monospace;font-size:12px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;
+  background:linear-gradient(135deg,rgba(0,255,247,0.15),rgba(139,0,255,0.2));
+  border:1px solid var(--neon-cyan);
+  border-radius:10px;color:var(--neon-cyan);cursor:pointer;
+  position:relative;overflow:hidden;transition:all 0.25s;
+  box-shadow:0 0 20px rgba(0,255,247,0.15),inset 0 0 20px rgba(0,255,247,0.05);
+}
+.auth-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
+  transform:translateX(-100%);transition:transform 0.5s;
+}
+.auth-btn:hover::before{transform:translateX(100%)}
+.auth-btn:hover{
+  background:linear-gradient(135deg,rgba(0,255,247,0.25),rgba(139,0,255,0.3));
+  box-shadow:0 0 40px rgba(0,255,247,0.3);transform:translateY(-1px);
+}
+.auth-btn:active{transform:scale(0.98)}
+/* Guest */
+.auth-divider{
+  text-align:center;margin:16px 0 0;
+  font-size:12px;color:var(--text2);letter-spacing:1px;
+}
+.auth-guest{
+  background:none;border:none;color:var(--text2);
+  font-family:'Rajdhani',sans-serif;font-size:13px;
+  cursor:pointer;text-decoration:underline;
+  text-underline-offset:3px;transition:color 0.2s;
+  padding:0;
+}
+.auth-guest:hover{color:var(--text)}
+
+/* ══════════════════════════════════════════
    ГЛАВНОЕ МЕНЮ
 ══════════════════════════════════════════ */
-#s-menu{}
-.logo-wrap{text-align:center;margin-bottom:48px;position:relative}
+.logo-wrap{text-align:center;margin-bottom:32px;position:relative}
 .logo{
   font-family:'Orbitron',monospace;
   font-weight:900;font-size:clamp(42px,12vw,72px);
@@ -103,7 +219,6 @@ body::before{
   font-family:'Orbitron',monospace;font-size:11px;letter-spacing:6px;
   color:var(--text2);margin-top:4px;text-transform:uppercase;
 }
-/* Анимированные тетромино в логотипе */
 .logo-pieces{
   position:absolute;top:-20px;right:-30px;
   display:grid;grid-template-columns:repeat(2,14px);gap:3px;
@@ -118,10 +233,37 @@ body::before{
 .logo-pieces span:nth-child(2){background:transparent;box-shadow:none}
 @keyframes piecesSpin{to{transform:rotate(360deg)}}
 
-/* Превью тетромино */
+/* Профиль пользователя в меню */
+.user-badge{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:50px;padding:8px 16px 8px 10px;
+  margin-bottom:24px;
+  cursor:default;
+}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',monospace;font-size:13px;font-weight:700;
+  color:#fff;flex-shrink:0;
+}
+.user-name{
+  font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;
+  color:var(--neon-cyan);flex:1;
+}
+.user-logout{
+  background:none;border:none;color:var(--text2);
+  font-size:11px;letter-spacing:1px;cursor:pointer;
+  font-family:'Rajdhani',sans-serif;
+  transition:color 0.2s;padding:0;
+}
+.user-logout:hover{color:var(--neon-red)}
+
 .mini-board{
   display:grid;grid-template-columns:repeat(6,18px);grid-template-rows:repeat(4,18px);
-  gap:2px;margin:0 auto 48px;width:fit-content;
+  gap:2px;margin:0 auto 32px;width:fit-content;
   opacity:0.7;
 }
 .mini-cell{
@@ -170,7 +312,6 @@ body::before{
 /* ══════════════════════════════════════════
    ЭКРАН РЕКОРДОВ
 ══════════════════════════════════════════ */
-#s-scores{}
 .panel{
   background:rgba(255,255,255,0.03);
   border:1px solid rgba(255,255,255,0.1);
@@ -199,6 +340,7 @@ body::before{
 .score-rank.bronze{color:#cd7f32}
 .score-val{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--text)}
 .score-level{font-size:12px;color:var(--text2)}
+.score-user{font-size:11px;color:var(--neon-cyan);letter-spacing:1px;margin-left:4px}
 
 /* ══════════════════════════════════════════
    НАСТРОЙКИ
@@ -228,62 +370,63 @@ body::before{
 .back-btn:hover{background:rgba(255,255,255,0.1);color:var(--text)}
 
 /* ══════════════════════════════════════════
-   ИГРОВОЙ ЭКРАН
+   ИГРОВОЙ ЭКРАН — АДАПТИВ
 ══════════════════════════════════════════ */
 #s-game{
-  padding:12px 10px 8px;
+  padding:6px 6px 4px;
   justify-content:flex-start;
-  gap:10px;
+  gap:6px;
+  align-items:center;
 }
 .game-layout{
-  display:flex;gap:10px;align-items:flex-start;
-  width:100%;max-width:400px;
+  display:flex;gap:6px;align-items:flex-start;
+  width:100%;
+  justify-content:center;
 }
 /* Левая панель */
 .game-left{
-  display:flex;flex-direction:column;gap:8px;
-  width:80px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:5px;
+  flex-shrink:0;
 }
 /* Правая панель */
 .game-right{
-  display:flex;flex-direction:column;gap:8px;
-  width:80px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:5px;
+  flex-shrink:0;
 }
 .info-box{
   background:rgba(255,255,255,0.03);
   border:1px solid rgba(255,255,255,0.08);
-  border-radius:10px;padding:10px 8px;text-align:center;
+  border-radius:8px;padding:6px 5px;text-align:center;
 }
 .info-label{
-  font-size:9px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--text2);margin-bottom:4px;display:block;
+  font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text2);margin-bottom:2px;display:block;
 }
 .info-val{
-  font-family:'Orbitron',monospace;font-size:18px;font-weight:700;
+  font-family:'Orbitron',monospace;font-size:14px;font-weight:700;
   color:var(--neon-cyan);text-shadow:0 0 12px rgba(0,255,247,0.5);
   line-height:1;
 }
-.info-val.big{font-size:22px}
+.info-val.big{font-size:16px}
 /* NEXT preview */
 .next-box{
   background:rgba(255,255,255,0.03);
   border:1px solid rgba(255,255,255,0.08);
-  border-radius:10px;padding:8px;
+  border-radius:8px;padding:5px;
 }
 .next-label{
-  font-size:9px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--text2);text-align:center;margin-bottom:6px;display:block;
+  font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text2);text-align:center;margin-bottom:4px;display:block;
 }
-#next-canvas{display:block;margin:0 auto}
-/* HOLD box */
-#hold-canvas{display:block;margin:0 auto}
+#next-canvas,#hold-canvas,#next2-canvas,#next3-canvas{display:block;margin:0 auto}
 
 /* Игровое поле */
 #board-wrap{
-  position:relative;flex:1;
-  border-radius:12px;overflow:hidden;
+  position:relative;
+  border-radius:10px;overflow:hidden;
+  flex-shrink:0;
 }
-#board-canvas{display:block;border-radius:12px}
+#board-canvas{display:block;border-radius:10px}
 /* Линии очистки */
 .line-flash{
   position:absolute;left:0;right:0;
@@ -300,15 +443,21 @@ body::before{
 /* Верхний бар */
 .game-topbar{
   display:flex;justify-content:space-between;align-items:center;
-  width:100%;max-width:400px;
+  width:100%;
+  max-width:100%;
+  padding:0 2px;
 }
 .game-title{
-  font-family:'Orbitron',monospace;font-size:12px;letter-spacing:4px;
+  font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;
   color:var(--text2);
 }
+.game-user-name{
+  font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;
+  color:var(--neon-cyan);opacity:0.7;
+}
 .pause-btn{
-  font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;
-  padding:6px 14px;border:1px solid rgba(255,255,255,0.15);
+  font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;
+  padding:5px 10px;border:1px solid rgba(255,255,255,0.15);
   border-radius:50px;background:rgba(255,255,255,0.05);
   color:var(--text2);cursor:pointer;transition:all 0.2s;
 }
@@ -318,19 +467,21 @@ body::before{
    МОБИЛЬНЫЕ КНОПКИ УПРАВЛЕНИЯ
 ══════════════════════════════════════════ */
 .controls{
-  display:flex;flex-direction:column;gap:8px;
-  width:100%;max-width:400px;margin-top:4px;
+  display:flex;flex-direction:column;gap:6px;
+  width:100%;
+  flex-shrink:0;
 }
-.ctrl-row{display:flex;justify-content:center;gap:8px}
+.ctrl-row{display:flex;justify-content:center;gap:6px}
 .ctrl-btn{
-  width:58px;height:52px;border-radius:12px;
+  border-radius:10px;
   background:rgba(255,255,255,0.05);
   border:1px solid rgba(255,255,255,0.12);
-  color:var(--text);font-size:22px;cursor:pointer;
+  color:var(--text);font-size:18px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:all 0.1s;
   -webkit-tap-highlight-color:transparent;
   user-select:none;
+  /* Размеры будут выставлены JS */
 }
 .ctrl-btn:active,.ctrl-btn.pressed{
   background:rgba(0,255,247,0.15);
@@ -338,14 +489,12 @@ body::before{
   box-shadow:0 0 15px rgba(0,255,247,0.3);
   transform:scale(0.93);
 }
-.ctrl-btn.wide{width:100px}
 .ctrl-btn.rotate{
   background:rgba(139,0,255,0.1);
   border-color:rgba(139,0,255,0.4);
 }
 .ctrl-btn.hold-btn{
-  width:52px;height:52px;
-  font-size:12px;letter-spacing:1px;
+  font-size:10px;letter-spacing:1px;
   font-family:'Orbitron',monospace;
   flex-direction:column;gap:2px;
 }
@@ -438,18 +587,12 @@ body::before{
   60%{opacity:1;transform:translateY(-40px) scale(1)}
   100%{opacity:0;transform:translateY(-70px) scale(0.8)}
 }
-
-/* ══════════════════════════════════════════
-   УРОВЕНЬ — ФЛЭШ
-══════════════════════════════════════════ */
 .level-up-flash{
   position:fixed;inset:0;pointer-events:none;z-index:90;
   background:radial-gradient(ellipse at center,rgba(139,0,255,0.4),transparent 70%);
   animation:lvlFlash 0.6s ease-out forwards;
 }
 @keyframes lvlFlash{0%{opacity:1}100%{opacity:0}}
-
-/* Скроллбар */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
@@ -462,11 +605,68 @@ body::before{
 <div class="orb orb3"></div>
 <canvas id="vfx-canvas"></canvas>
 
+<!-- ═══════════════ АВТОРИЗАЦИЯ ═══════════════ -->
+<div id="s-auth" class="screen visible">
+  <div class="auth-container">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">ВХОД</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">РЕГИСТРАЦИЯ</button>
+    </div>
+    <!-- Вход -->
+    <div class="auth-panel active" id="auth-login">
+      <div class="auth-logo">
+        <div class="auth-logo-text">ТЕТРИС</div>
+        <div class="auth-logo-sub">Neon Edition</div>
+      </div>
+      <div class="auth-msg" id="login-msg"></div>
+      <div class="auth-field">
+        <label class="auth-label">Логин</label>
+        <input class="auth-input" id="login-username" type="text" placeholder="Введите логин" autocomplete="username" autocapitalize="none">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Пароль</label>
+        <input class="auth-input" id="login-password" type="password" placeholder="Введите пароль" autocomplete="current-password">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">▶ ВОЙТИ</button>
+      <div class="auth-divider">
+        или <button class="auth-guest" onclick="doGuest()">войти как гость</button>
+      </div>
+    </div>
+    <!-- Регистрация -->
+    <div class="auth-panel" id="auth-register">
+      <div class="auth-logo">
+        <div class="auth-logo-text">ТЕТРИС</div>
+        <div class="auth-logo-sub">Создать аккаунт</div>
+      </div>
+      <div class="auth-msg" id="reg-msg"></div>
+      <div class="auth-field">
+        <label class="auth-label">Логин</label>
+        <input class="auth-input" id="reg-username" type="text" placeholder="Придумайте логин" autocomplete="username" autocapitalize="none">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Пароль</label>
+        <input class="auth-input" id="reg-password" type="password" placeholder="Придумайте пароль" autocomplete="new-password">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Повтор пароля</label>
+        <input class="auth-input" id="reg-password2" type="password" placeholder="Повторите пароль" autocomplete="new-password">
+      </div>
+      <button class="auth-btn" onclick="doRegister()">✦ СОЗДАТЬ</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════ ГЛАВНОЕ МЕНЮ ═══════════════ -->
-<div id="s-menu" class="screen visible">
+<div id="s-menu" class="screen">
   <div class="logo-wrap">
     <div class="logo">ТЕТРИС<div class="logo-pieces"><span></span><span></span><span></span><span></span></div></div>
     <div class="logo-sub">Neon Edition</div>
+  </div>
+  <!-- Профиль -->
+  <div class="user-badge" id="user-badge">
+    <div class="user-avatar" id="user-avatar">?</div>
+    <span class="user-name" id="user-name-display">ГОСТЬ</span>
+    <button class="user-logout" onclick="doLogout()">ВЫЙТИ</button>
   </div>
   <!-- Мини-превью -->
   <div class="mini-board" id="mini-board"></div>
@@ -512,33 +712,36 @@ body::before{
 
 <!-- ═══════════════ ИГРА ═══════════════ -->
 <div id="s-game" class="screen">
-  <div class="game-topbar">
-    <div class="game-title">ТЕТРИС</div>
+  <div class="game-topbar" id="game-topbar">
+    <div>
+      <div class="game-title">ТЕТРИС</div>
+      <div class="game-user-name" id="game-user-name"></div>
+    </div>
     <button class="pause-btn" onclick="togglePause()">II ПАУЗА</button>
   </div>
-  <div class="game-layout">
+  <div class="game-layout" id="game-layout">
     <!-- Левая панель -->
-    <div class="game-left">
-      <div class="info-box">
+    <div class="game-left" id="game-left">
+      <div class="info-box" id="box-score">
         <span class="info-label">Счёт</span>
         <span class="info-val big" id="ui-score">0</span>
       </div>
-      <div class="info-box">
+      <div class="info-box" id="box-best">
         <span class="info-label">Рекорд</span>
         <span class="info-val" id="ui-best">0</span>
       </div>
-      <div class="info-box">
+      <div class="info-box" id="box-lines">
         <span class="info-label">Линии</span>
         <span class="info-val" id="ui-lines">0</span>
       </div>
-      <div class="info-box">
+      <div class="info-box" id="box-level">
         <span class="info-label">Уровень</span>
         <span class="info-val" id="ui-level">1</span>
       </div>
       <!-- HOLD -->
-      <div class="next-box">
+      <div class="next-box" id="box-hold">
         <span class="next-label">HOLD</span>
-        <canvas id="hold-canvas" width="64" height="54"></canvas>
+        <canvas id="hold-canvas" width="56" height="48"></canvas>
       </div>
     </div>
     <!-- Поле -->
@@ -546,27 +749,27 @@ body::before{
       <canvas id="board-canvas"></canvas>
     </div>
     <!-- Правая панель — NEXT -->
-    <div class="game-right">
+    <div class="game-right" id="game-right">
       <div class="next-box">
         <span class="next-label">NEXT</span>
-        <canvas id="next-canvas" width="64" height="54"></canvas>
-      </div>
-      <div class="next-box" style="margin-top:0">
-        <canvas id="next2-canvas" width="64" height="54"></canvas>
+        <canvas id="next-canvas" width="56" height="48"></canvas>
       </div>
       <div class="next-box">
-        <canvas id="next3-canvas" width="64" height="54"></canvas>
+        <canvas id="next2-canvas" width="56" height="48"></canvas>
+      </div>
+      <div class="next-box">
+        <canvas id="next3-canvas" width="56" height="48"></canvas>
       </div>
     </div>
   </div>
   <!-- Мобильное управление -->
-  <div class="controls">
+  <div class="controls" id="controls">
     <div class="ctrl-row">
       <button class="ctrl-btn hold-btn" id="btn-hold" ontouchstart="ctrlHold()" onclick="ctrlHold()">
         <span>📦</span><span style="font-size:8px">HOLD</span>
       </button>
       <button class="ctrl-btn rotate" id="btn-up" ontouchstart="e=>{e.preventDefault();ctrlRotate()}" onclick="ctrlRotate()">⟳</button>
-      <button class="ctrl-btn wide" id="btn-drop" ontouchstart="e=>{e.preventDefault();ctrlDrop()}" onclick="ctrlDrop()">▼▼ DROP</button>
+      <button class="ctrl-btn" id="btn-drop" style="font-size:13px;letter-spacing:1px;font-family:'Orbitron',monospace" ontouchstart="e=>{e.preventDefault();ctrlDrop()}" onclick="ctrlDrop()">▼▼DROP</button>
     </div>
     <div class="ctrl-row">
       <button class="ctrl-btn" id="btn-left"
@@ -611,6 +814,113 @@ body::before{
 
 <script>
 /* ═══════════════════════════════════════════════════
+   AUTH СИСТЕМА
+═══════════════════════════════════════════════════ */
+let currentUser = null; // {username, isGuest}
+
+function getUsers(){
+  try{ return JSON.parse(localStorage.getItem('tet_users'))||{} }catch(e){ return {} }
+}
+function saveUsers(u){ localStorage.setItem('tet_users', JSON.stringify(u)) }
+function getSession(){
+  try{ return JSON.parse(localStorage.getItem('tet_session'))||null }catch(e){ return null }
+}
+function saveSession(u){ localStorage.setItem('tet_session', JSON.stringify(u)) }
+function clearSession(){ localStorage.removeItem('tet_session') }
+
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
+    t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register'));
+  });
+  document.getElementById('auth-login').classList.toggle('active', tab==='login');
+  document.getElementById('auth-register').classList.toggle('active', tab==='register');
+  clearAuthMsgs();
+}
+
+function clearAuthMsgs(){
+  ['login-msg','reg-msg'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.className='auth-msg'; el.textContent='';
+  });
+}
+
+function showMsg(id, text, type){
+  const el=document.getElementById(id);
+  el.className='auth-msg '+type;
+  el.textContent=text;
+}
+
+function doLogin(){
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  if(!username||!password){ showMsg('login-msg','Заполните все поля','error'); return; }
+  const users = getUsers();
+  if(!users[username]){ showMsg('login-msg','Пользователь не найден','error'); return; }
+  if(users[username].password !== btoa(password)){ showMsg('login-msg','Неверный пароль','error'); return; }
+  showMsg('login-msg','Добро пожаловать!','success');
+  setTimeout(()=>loginSuccess({username, isGuest:false}), 500);
+}
+
+function doRegister(){
+  const username = document.getElementById('reg-username').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const password2 = document.getElementById('reg-password2').value;
+  if(!username||!password){ showMsg('reg-msg','Заполните все поля','error'); return; }
+  if(username.length < 3){ showMsg('reg-msg','Логин минимум 3 символа','error'); return; }
+  if(password.length < 4){ showMsg('reg-msg','Пароль минимум 4 символа','error'); return; }
+  if(password !== password2){ showMsg('reg-msg','Пароли не совпадают','error'); return; }
+  const users = getUsers();
+  if(users[username]){ showMsg('reg-msg','Логин уже занят','error'); return; }
+  users[username] = { password: btoa(password), created: Date.now() };
+  saveUsers(users);
+  showMsg('reg-msg','Аккаунт создан! Входим…','success');
+  setTimeout(()=>loginSuccess({username, isGuest:false}), 700);
+}
+
+function doGuest(){
+  loginSuccess({username:'ГОСТЬ', isGuest:true});
+}
+
+function loginSuccess(user){
+  currentUser = user;
+  if(!user.isGuest) saveSession(user);
+  updateUserUI();
+  showScreen('s-menu');
+}
+
+function doLogout(){
+  currentUser = null;
+  clearSession();
+  showScreen('s-auth');
+}
+
+function updateUserUI(){
+  if(!currentUser) return;
+  const name = currentUser.username.toUpperCase();
+  const letter = currentUser.isGuest ? '?' : name[0];
+  document.getElementById('user-avatar').textContent = letter;
+  document.getElementById('user-name-display').textContent = name;
+  document.getElementById('game-user-name').textContent = currentUser.isGuest ? '' : name;
+}
+
+function tryAutoLogin(){
+  const session = getSession();
+  if(session && session.username){
+    const users = getUsers();
+    if(users[session.username]){
+      loginSuccess(session);
+      return true;
+    }
+  }
+  return false;
+}
+
+// Enter key support
+document.getElementById('login-password').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('login-username').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('login-password').focus(); });
+document.getElementById('reg-password2').addEventListener('keydown',e=>{ if(e.key==='Enter') doRegister(); });
+
+/* ═══════════════════════════════════════════════════
    ТЕТРИС — ДВИЖОК
 ═══════════════════════════════════════════════════ */
 
@@ -630,7 +940,6 @@ const SHAPES = {
   L:[[0,0,1],[1,1,1],[0,0,0]]
 };
 const TYPES = Object.keys(SHAPES);
-// Wall kick data (SRS)
 const KICKS = {
   normal:[[[0,0],[-1,0],[-1,1],[0,-2],[-1,-2]],[[0,0],[1,0],[1,-1],[0,2],[1,2]],[[0,0],[1,0],[1,1],[0,-2],[1,-2]],[[0,0],[-1,0],[-1,-1],[0,2],[-1,2]]],
   I:[[[0,0],[-2,0],[1,0],[-2,-1],[1,2]],[[0,0],[-1,0],[2,0],[-1,2],[2,-1]],[[0,0],[2,0],[-1,0],[2,1],[-1,-2]],[[0,0],[1,0],[-2,0],[1,-2],[-2,1]]]
@@ -655,7 +964,8 @@ function loadData(){
 }
 function saveSettings(){ localStorage.setItem('tet_settings', JSON.stringify(settings)) }
 function saveScore(s, lv, ln){
-  bestScores.push({score:s, level:lv, lines:ln});
+  const entry = {score:s, level:lv, lines:ln, user: currentUser ? currentUser.username : 'ГОСТЬ'};
+  bestScores.push(entry);
   bestScores.sort((a,b)=>b.score-a.score);
   bestScores = bestScores.slice(0,10);
   localStorage.setItem('tet_scores', JSON.stringify(bestScores));
@@ -676,18 +986,77 @@ const hx = hc.getContext('2d');
 const vfc = document.getElementById('vfx-canvas');
 const vfx = vfc.getContext('2d');
 
-let CELL = 32;
+let CELL = 28;
+let SIDE_W = 64; // ширина боковых панелей (будет пересчитана)
 
 function resizeBoard(){
-  const wrap = document.getElementById('board-wrap');
-  const avW = wrap.clientWidth || (window.innerWidth - 180);
-  const avH = window.innerHeight - 200;
-  CELL = Math.floor(Math.min(avW / COLS, avH / ROWS));
-  CELL = Math.max(22, Math.min(CELL, 38));
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Топбар высота
+  const topbarH = document.getElementById('game-topbar').offsetHeight || 24;
+  // Контролс высота (2 ряда кнопок + gap)
+  const ctrlH = estimateControlsHeight(vw, vh);
+  const gapTotal = 6 * 3; // gap между элементами
+
+  const availH = vh - topbarH - ctrlH - gapTotal - 12;
+  // Ширина поля: vw - 2 боковые панели - gaps - padding
+  // Сначала вычислим CELL от высоты, потом проверим что влезет по ширине
+
+  // Боковая панель: min чтобы текст читался
+  SIDE_W = Math.max(52, Math.min(70, Math.floor(vw * 0.16)));
+
+  const availW = vw - SIDE_W * 2 - 6 * 2 - 12;
+
+  let cell = Math.floor(Math.min(availH / ROWS, availW / COLS));
+  cell = Math.max(18, Math.min(cell, 38));
+  CELL = cell;
+
   bc.width  = COLS * CELL;
   bc.height = ROWS * CELL;
-  vfc.width  = window.innerWidth;
-  vfc.height = window.innerHeight;
+
+  // Обновляем ширину side-панелей
+  const gl = document.getElementById('game-left');
+  const gr = document.getElementById('game-right');
+  gl.style.width = SIDE_W + 'px';
+  gr.style.width = SIDE_W + 'px';
+
+  // Размеры превью-канвасов
+  const previewW = SIDE_W - 10;
+  const previewH = Math.floor(previewW * 0.85);
+  [nc,n2c,n3c,hc].forEach(c=>{
+    c.width = previewW;
+    c.height = previewH;
+  });
+
+  // Кнопки управления
+  resizeControls(vw, vh, topbarH, ctrlH);
+
+  vfc.width  = vw;
+  vfc.height = vh;
+}
+
+function estimateControlsHeight(vw, vh){
+  // 2 ряда кнопок, высота кнопок = ~11% vh но не меньше 40
+  const btnH = Math.max(40, Math.min(Math.floor(vh * 0.082), 56));
+  return btnH * 2 + 6 + 8; // 2 ряда + gap + отступ
+}
+
+function resizeControls(vw, vh, topbarH, ctrlH){
+  const btnH = Math.max(40, Math.min(Math.floor(vh * 0.082), 56));
+  const btnW = Math.max(44, Math.min(Math.floor(vw / 5.5), 68));
+  const dropW = Math.max(80, Math.min(Math.floor(vw * 0.28), 120));
+
+  // Применяем размеры
+  const allBtns = document.querySelectorAll('.ctrl-btn');
+  allBtns.forEach(b=>{
+    b.style.height = btnH + 'px';
+    if(b.id === 'btn-drop'){
+      b.style.width = dropW + 'px';
+    } else {
+      b.style.width = btnW + 'px';
+    }
+  });
 }
 
 // ─── ЭКРАНЫ ───
@@ -735,7 +1104,6 @@ function buildMiniBoard(){
 }
 let miniAnim = 0;
 function animateMiniBoard(){
-  // Простая анимация — мерцание ячеек
   clearTimeout(miniAnim);
   const cells = document.querySelectorAll('.mini-cell.f');
   cells.forEach((c,i)=>{
@@ -807,7 +1175,6 @@ function ghostY(){
 }
 
 function lock(){
-  // Место текущей фигуры
   for(let r=0;r<cur.cells.length;r++)
     for(let c=0;c<cur.cells[r].length;c++)
       if(cur.cells[r][c]){
@@ -826,12 +1193,9 @@ function clearLines(){
     if(board[r].every(c=>c)) full.push(r);
   if(!full.length){ combo=0; return; }
   combo++;
-  // VFX
   flashLines(full);
   if(settings.particles) spawnLineParts(full);
-  // Удаляем
   full.forEach(r=>{board.splice(r,1);board.unshift(Array(COLS).fill(null))});
-  // Очки
   const pts = SCORES_PER_LINE[full.length] * level;
   const comboBonus = combo>1 ? Math.floor(pts*0.5*(combo-1)) : 0;
   score += pts + comboBonus;
@@ -934,10 +1298,8 @@ function togglePause(){
 function render(){
   const W = bc.width, H = bc.height;
   bx.clearRect(0,0,W,H);
-  // Фон поля
   bx.fillStyle='rgba(5,5,16,0.85)';
   bx.fillRect(0,0,W,H);
-  // Сетка
   bx.strokeStyle='rgba(255,255,255,0.04)';
   bx.lineWidth=0.5;
   for(let r=0;r<ROWS;r++){
@@ -946,18 +1308,14 @@ function render(){
   for(let c=0;c<COLS;c++){
     bx.beginPath();bx.moveTo(c*CELL,0);bx.lineTo(c*CELL,H);bx.stroke();
   }
-  // Доска
   for(let r=0;r<ROWS;r++)
     for(let c=0;c<COLS;c++)
       if(board[r][c]) drawCell(bx, c, r, board[r][c], 1);
-  // Призрак
   if(settings.ghost && cur){
     const gy = ghostY();
     if(gy !== cur.y) drawPiece(bx, cur.cells, cur.x, gy, cur.color, 0.2);
   }
-  // Текущая фигура
   if(cur) drawPiece(bx, cur.cells, cur.x, cur.y, cur.color, 1);
-  // Граница поля
   bx.strokeStyle='rgba(0,255,247,0.15)';
   bx.lineWidth=1;
   bx.strokeRect(0,0,W,H);
@@ -966,18 +1324,15 @@ function render(){
 function drawCell(ctx, cx, cy, color, alpha){
   const x = cx*CELL+1, y = cy*CELL+1, s = CELL-2;
   ctx.globalAlpha = alpha;
-  // Тело
   ctx.fillStyle = color;
   roundRect(ctx,x,y,s,s,4);
   ctx.fill();
-  // Свечение
   ctx.shadowColor = color;
   ctx.shadowBlur = 10;
   ctx.fillStyle = color;
   roundRect(ctx,x,y,s,s,4);
   ctx.fill();
   ctx.shadowBlur = 0;
-  // Блик
   ctx.fillStyle='rgba(255,255,255,0.3)';
   roundRect(ctx,x+2,y+2,s-4,4,2);
   ctx.fill();
@@ -991,14 +1346,15 @@ function drawPiece(ctx, cells, px, py, color, alpha){
 }
 
 function drawMini(ctx, type, alpha=1){
-  if(!type){ctx.clearRect(0,0,64,54);return}
-  ctx.clearRect(0,0,64,54);
+  const cw2=ctx.canvas.width, ch2=ctx.canvas.height;
+  if(!type){ctx.clearRect(0,0,cw2,ch2);return}
+  ctx.clearRect(0,0,cw2,ch2);
   const cells = SHAPES[type];
   const color = COLORS[type];
   const cw = cells[0].length, ch = cells.length;
-  const cs = Math.floor(Math.min(60/cw,48/ch));
-  const ox = Math.floor((64 - cw*cs)/2);
-  const oy = Math.floor((54 - ch*cs)/2);
+  const cs = Math.floor(Math.min((cw2-4)/cw,(ch2-4)/ch));
+  const ox = Math.floor((cw2 - cw*cs)/2);
+  const oy = Math.floor((ch2 - ch*cs)/2);
   for(let r=0;r<ch;r++)
     for(let c=0;c<cw;c++)
       if(cells[r][c]){
@@ -1104,7 +1460,7 @@ function flashLines(rows){
   });
 }
 function updateVFX(dt){
-  vfc.width=vfc.width; // clear
+  vfc.width=vfc.width;
   parts=parts.filter(p=>p.life>0);
   parts.forEach(p=>{
     p.x+=p.vx; p.y+=p.vy; p.vy+=0.2; p.vx*=0.97; p.life-=p.decay;
@@ -1190,7 +1546,7 @@ boardEl.addEventListener('touchend',e=>{
   else if(dy>40){ if(dy>120) ctrlDrop(); else softDrop(); }
 },{passive:true});
 
-// ─── ЗВУК (Web Audio) ───
+// ─── ЗВУК ───
 let ac;
 function getAC(){ if(!ac) try{ac=new(window.AudioContext||window.webkitAudioContext)()}catch(e){} return ac; }
 function playSound(type){
@@ -1261,7 +1617,10 @@ function renderScores(){
     <div class="score-row">
       <span class="score-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">#${i+1}</span>
       <span class="score-val">${s.score.toLocaleString('ru')}</span>
-      <span class="score-level">Ур.${s.level} / ${s.lines}л</span>
+      <span>
+        <span class="score-level">Ур.${s.level}/${s.lines}л</span>
+        ${s.user?`<span class="score-user">${s.user}</span>`:''}
+      </span>
     </div>
   `).join('');
 }
@@ -1269,7 +1628,7 @@ function renderScores(){
 // ─── ИНИЦИАЛИЗАЦИЯ ───
 loadData();
 buildMiniBoard();
-animateMiniBoard();
+
 // Применить настройки
 ['sound','particles','ghost'].forEach(k=>{
   const el=document.getElementById('opt-'+k);
@@ -1292,8 +1651,12 @@ window.addEventListener('resize', ()=>{
   vfc.width=window.innerWidth; vfc.height=window.innerHeight;
 });
 
-// Предотвратить скролл на мобиле
 document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+
+// Авто-логин или показ auth
+if(!tryAutoLogin()){
+  // уже на auth экране
+}
 </script>
 </body>
 </html>
